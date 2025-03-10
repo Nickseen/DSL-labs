@@ -1,24 +1,34 @@
 import { Grammar } from './Grammar';
 import { FiniteAutomaton } from './FiniteAutomaton';
+import { generateImage } from './GraphvizUtils';
 
-const VN: string[] = ['S', 'D', 'F'];
-const VT: string[] = ['a', 'b', 'c', 'd'];
-const startVariable: string = 'S';
-const hashMap: Map<string, string[]> = new Map();
-
-hashMap.set('S', ['aS', 'bS', 'cD']);
-hashMap.set('D', ['dD', 'bF', 'a']);
-hashMap.set('F', ['bS', 'a']);
+// Пример использования
+const VN = ['S', 'A', 'B'];
+const VT = ['a', 'b'];
+const startVariable = 'S';
+const hashMap = new Map<string, string[]>([
+    ['S', ['aS', 'bA']],
+    ['A', ['aS', 'bA', 'bB']],
+    ['B', ['a', 'bA']],
+]);
 
 const grammar = new Grammar(VN, VT, startVariable, hashMap);
+console.log("Generated string:", grammar.generateString());
+console.log("Grammar classification:", grammar.classifyGrammar());
 
-console.log("Random generated string: " + grammar.generateString());
+const finiteAutomaton = grammar.toFiniteAutomaton();
+console.log("Finite Automaton:\n", finiteAutomaton.toString());
+console.log("Is deterministic:", grammar.isDeterministic());
 
-const automaton = grammar.toFiniteAutomaton();
+const dfa = finiteAutomaton.toDFA();
+console.log("DFA:\n", dfa.toString());
 
-console.log("\nFinite automaton: ");
-console.log(automaton.toString());
+const regularGrammar = finiteAutomaton.toRegularGrammar();
+console.log("Regular Grammar:", regularGrammar);
 
-const generatedString = grammar.generateString();
-console.log(automaton.stringBelongToLanguage('abcd'));  // Example string for testing
-console.log(automaton.stringBelongToLanguage(generatedString));  // Checking if the generated string belongs to the language
+// Генерация изображения
+const dotCode = finiteAutomaton.toDot();
+
+generateImage(dotCode, './finite_automaton.png')
+    .then(() => console.log("Image generated successfully!"))
+    .catch(err => console.error(err));

@@ -1,0 +1,13 @@
+digraph FiniteAutomaton {
+  rankdir=LR; // Left-to-Right layout
+  node [shape = circle]; S A B;
+  node [shape = doublecircle]; X;
+  start [shape = plaintext, label = ""];
+  start -> S;
+  S -> S [label = "a"];
+  S -> A [label = "b"];
+  A -> S [label = "a"];
+  A -> {A,B} [label = "b"];
+  B -> X [label = "a"];
+  B -> A [label = "b"];
+}
